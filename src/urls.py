@@ -18,9 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from src.events import views
+from src.events.views import EventListView
+from src.auth.views import RegisterView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/events/", views.EventListView.as_view(), name="event_list"),
+    path("api/events/", EventListView.as_view(), name="event_list"),
+    path("api/auth/register/", RegisterView.as_view(), name="user_register")
 ]
