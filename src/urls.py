@@ -18,6 +18,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from src.events import views
+
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/events/", views.EventListView.as_view(), name="event_list"),
 ]
