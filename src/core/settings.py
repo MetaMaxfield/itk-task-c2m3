@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django_filters",
     "src.events",
     "src.my_auth",
+    "src.sync",
 ]
 
 MIDDLEWARE = [
