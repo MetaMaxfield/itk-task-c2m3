@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from src.auth.views import LoginView, RegisterView
+from src.auth.views import LoginView, RefreshTokenView, RegisterView
 from src.events.views import EventListView
 
 urlpatterns = [
@@ -26,4 +26,5 @@ urlpatterns = [
     path("api/events/", EventListView.as_view(), name="event_list"),
     path("api/auth/register/", RegisterView.as_view(), name="user_register"),
     path("api/auth/login/", LoginView.as_view(), name="user_login"),
+    path("api/auth/token/refresh/", RefreshTokenView.as_view(), name="token_token"),
 ]
