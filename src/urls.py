@@ -17,14 +17,16 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
+from rest_framework_simplejwt.views import TokenBlacklistView
 
-from src.my_auth.views import LoginView, RefreshTokenView, RegisterView
 from src.events.views import EventListView
+from src.my_auth.views import LoginView, RefreshTokenView, RegisterView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/events/", EventListView.as_view(), name="event_list"),
     path("api/auth/register/", RegisterView.as_view(), name="user_register"),
     path("api/auth/login/", LoginView.as_view(), name="user_login"),
-    path("api/auth/token/refresh/", RefreshTokenView.as_view(), name="token_token"),
+    path("api/auth/logout/", TokenBlacklistView.as_view(), name="user_logout"),
+    path("api/auth/token/refresh/", RefreshTokenView.as_view(), name="token_refresh"),
 ]
