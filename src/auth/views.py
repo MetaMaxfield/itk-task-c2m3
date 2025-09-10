@@ -1,19 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
-from rest_framework_simplejwt.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from src.auth.serializers import LoginSerializer, RegisterSerializer
-
-
-def get_tokens_for_user(user):
-    if not user.is_active:
-        raise AuthenticationFailed("User is not active")
-
-    refresh = RefreshToken.for_user(user)
-
-    return str(refresh.access_token), str(refresh)
+from src.auth.services import get_tokens_for_user
 
 
 class RegisterView(APIView):
