@@ -25,12 +25,14 @@ class Event(models.Model):
     STATUS_TYPES = [(OPEN_STATUS, "Открыт"), (CLOSED_STATUS, "Закрыт")]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField("Название", max_length=50)
-    date = models.DateTimeField("Дата проведения мероприятия")
+    name = models.CharField("Название", max_length=50)
+    event_time = models.DateTimeField("Дата и время проведения мероприятия")
+    registration_deadline = models.DateTimeField("Крайний срок регистрации")
     status = models.CharField("Текущий статус", choices=STATUS_TYPES)
     location = models.ForeignKey(
         "Location", blank=True, null=True, on_delete=models.SET_NULL
     )
+    changed_at = models.DateTimeField("Дата и время изменения мероприятия")
 
     def __str__(self):
         return self.title
