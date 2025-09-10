@@ -28,10 +28,10 @@ class Event(models.Model):
     name = models.CharField("Название", max_length=50)
     event_time = models.DateTimeField("Дата и время проведения мероприятия")
     registration_deadline = models.DateTimeField("Крайний срок регистрации")
-    status = models.CharField("Текущий статус", choices=STATUS_TYPES)
-    location = models.ForeignKey(
+    place = models.ForeignKey(
         "Location", blank=True, null=True, on_delete=models.SET_NULL
     )
+    status = models.CharField("Текущий статус", choices=STATUS_TYPES)
     changed_at = models.DateTimeField("Дата и время изменения мероприятия")
 
     def __str__(self):
