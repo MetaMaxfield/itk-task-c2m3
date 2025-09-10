@@ -10,8 +10,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
-from src.auth.serializers import LoginSerializer, RegisterSerializer
-from src.auth.services import get_tokens_for_user
+from src.my_auth.serializers import LoginSerializer, RegisterSerializer
+from src.my_auth.services import get_tokens_for_user
 
 
 class RegisterView(APIView):

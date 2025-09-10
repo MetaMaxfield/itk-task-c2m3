@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "src.events",
-    "src.auth",
+    "src.my_auth",
 ]
 
 MIDDLEWARE = [

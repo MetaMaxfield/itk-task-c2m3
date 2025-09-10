@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from src.auth.views import LoginView, RefreshTokenView, RegisterView
+from src.my_auth.views import LoginView, RefreshTokenView, RegisterView
 from src.events.views import EventListView
 
 urlpatterns = [
