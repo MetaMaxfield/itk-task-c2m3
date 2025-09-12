@@ -16,13 +16,16 @@ class EventListView(ListAPIView):
     permission_classes = [
         IsAuthenticated,
     ]
-    queryset = Event.objects.filter(status=Event.OPEN_STATUS).select_related("location")
+    queryset = Event.objects.filter(status=Event.OPEN_STATUS).select_related("place")
     serializer_class = EventListSerializer
     pagination_class = CustomCursorPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = [
-        "date",
+        "event_time",
+        "registration_deadline",
+        "status",
+        "name",  # временное решение поиска "name" (ищем exact с помощью django-filter)
     ]
     ordering_fields = [
-        "date",
+        "event_time",
     ]
