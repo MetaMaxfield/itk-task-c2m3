@@ -7,10 +7,10 @@ class Location(models.Model):
     """Location model."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField("Название", max_length=50)
+    name = models.CharField("Название", max_length=50)
 
     def __str__(self):
-        return self.title
+        return self.name
 
     class Meta:
         verbose_name = "Площадка"
