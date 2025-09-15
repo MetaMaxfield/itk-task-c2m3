@@ -16,6 +16,9 @@ class LocationSyncListSerializer(serializers.ListSerializer):
         redis = self.context.get("redis")
         exists_ids = redis.smembers("exists_location_ids")
 
+        # оставляем только уникальные id
+        validated_data = {d["id"]: d for d in validated_data}.values()
+
         exists_locations = []
         new_locations = []
         for val_loc_data in validated_data:
@@ -40,7 +43,7 @@ class LocationSyncListSerializer(serializers.ListSerializer):
 
 class LocationSyncSerializer(serializers.Serializer):
     id = serializers.UUIDField()
-    name = serializers.CharField(max_length=50)
+    name = serializers.CharField(max_length=150)
 
     class Meta:
         list_serializer_class = LocationSyncListSerializer
@@ -51,11 +54,11 @@ class EventSyncListSerializer(serializers.ListSerializer):
         redis = self.context.get("redis")
         exists_ids = redis.smembers("exists_event_ids")
 
-        exists_events = []
+        exists_events = {}
         new_events = []
         for val_event_data in validated_data:
             if str(val_event_data["id"]) in exists_ids:
-                exists_events.append(Event(**val_event_data))
+                exists_events[val_event_data["id"]] = Event(**val_event_data)
             else:
                 new_events.append(Event(**val_event_data))
 
@@ -63,24 +66,33 @@ class EventSyncListSerializer(serializers.ListSerializer):
         for obj_event in new_events:
             redis.sadd("exists_event_ids", str(obj_event.id))
 
-        Event.objects.bulk_update(
-            exists_events,
-            [
-                "name",
-                "event_time",
-                "registration_deadline",
-                "place",
-                "status",
-                "changed_at",
-            ],
-        )
+        fields = [
+            "name",
+            "event_time",
+            "registration_deadline",
+            "place",
+            "status",
+            "changed_at",
+        ]
+        events_to_update = []
+        for db_event in Event.objects.filter(
+            id__in=[obj_id for obj_id in exists_events.keys()]
+        ):
+            local_event = exists_events[db_event.id]
+            has_changes = any(
+                getattr(db_event, f) != getattr(local_event, f) for f in fields
+            )
+            if has_changes:
+                events_to_update.append(local_event)
 
-        return len(new_events), len(exists_events)
+        Event.objects.bulk_update(events_to_update, fields)
+
+        return len(new_events), len(events_to_update)
 
 
 class EventSyncSerializer(serializers.Serializer):
     id = serializers.UUIDField()
-    name = serializers.CharField(max_length=50)
+    name = serializers.CharField(max_length=150)
     event_time = serializers.DateTimeField()
     registration_deadline = serializers.DateTimeField()
     place_id = serializers.UUIDField(allow_null=True)
