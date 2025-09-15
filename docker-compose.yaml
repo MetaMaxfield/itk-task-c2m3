@@ -3,7 +3,7 @@ networks:
 
 services:
   backend:
-    container_name: backend_container
+    container_name: event_face_container
     build:
       context: .
     ports:
@@ -17,7 +17,7 @@ services:
 
   postgres:
     image: postgres:17.5-alpine
-    container_name: postgres_container
+    container_name: postgresql_container
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -48,6 +48,7 @@ services:
 
   redis:
     image: redis:8.2.1-alpine
+    container_name: redis_container
     command:
       - redis-server
       - --appendonly yes
