@@ -10,6 +10,8 @@ ENV PYTHONUNBUFFERED 1
 RUN apk update \
     && apk add postgresql-dev gcc python3-dev musl-dev
 
+RUN pip install uv
+
 COPY pyproject.toml uv.lock /backend/
 
 RUN uv sync --frozen --no-cache
