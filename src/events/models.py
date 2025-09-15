@@ -5,7 +5,7 @@ class Location(models.Model):
     """Location model."""
 
     id = models.UUIDField(primary_key=True, editable=False)
-    name = models.CharField("Название", max_length=50)
+    name = models.CharField("Название", max_length=150)
 
     def __str__(self):
         return self.name
@@ -23,7 +23,7 @@ class Event(models.Model):
     STATUS_TYPES = [(OPEN_STATUS, "Открыт"), (CLOSED_STATUS, "Закрыт")]
 
     id = models.UUIDField(primary_key=True, editable=False)
-    name = models.CharField("Название", max_length=50, db_index=True)
+    name = models.CharField("Название", max_length=150, db_index=True)
     event_time = models.DateTimeField(
         "Дата и время проведения мероприятия", db_index=True
     )
