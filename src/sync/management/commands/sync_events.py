@@ -1,8 +1,10 @@
+import os
 import time
 
 import redis
 import requests
 from django.core.management.base import BaseCommand
+from dotenv import load_dotenv
 from requests.exceptions import RequestException
 from rest_framework.status import HTTP_200_OK
 
@@ -10,10 +12,12 @@ from src.events.models import Event, Location
 from src.events.serializers import EventSyncSerializer, LocationSyncSerializer
 from src.sync.models import SyncResult
 
+load_dotenv()
+
 
 class Command(BaseCommand):
     help = "Synchronization of events"
-    redis_host = "localhost"
+    redis_host = "redis"
     redis_port = 6379
     redis_db = 1
     url = "https://events.k3scluster.tech/api/events/"
@@ -55,16 +59,33 @@ class Command(BaseCommand):
         self.update_quantity_counters(new_count, upd_count)
 
     def create_requests(self, url):
-        retries = 0
+        retries = 5
         while url:
             try:
-                response = requests.get(url, timeout=10)
+                response = requests.get(
+                    url,
+                    timeout=10,
+                    headers={
+                        "Authorization": f"Bearer {os.getenv('JWT_TOKEN')}",
+                        "Content-Type": "application/json",
+                    },
+                )
+
             except RequestException:
                 response = None
 
             if not response or response.status_code != HTTP_200_OK:
-                retries += 1
-                if retries == 5:
+                self.stdout.write(
+                    self.style.WARNING(
+                        (
+                            f"Unable to retrieve data for {url}. "
+                            f"Remaining attempts: {retries}."
+                        )
+                    )
+                )
+
+                retries -= 1
+                if retries == 0:
                     self.stdout.write(
                         self.style.ERROR(
                             (
@@ -78,6 +99,8 @@ class Command(BaseCommand):
                     break
                 time.sleep(5)
             else:
+                self.stdout.write(f"Successful synchronization at {url}")
+
                 data = response.json()
 
                 locations_data = []
@@ -89,7 +112,7 @@ class Command(BaseCommand):
                 self.sync_locations(locations_data)
                 self.sync_events(data["results"])
 
-                retries = 0
+                retries = 5
 
                 url = data["next"]
 
